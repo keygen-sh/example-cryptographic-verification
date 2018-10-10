@@ -3,10 +3,10 @@ This is an example of cryptographically validating license keys using
 your Keygen account's public key. You can find your public key within
 [your account's settings page](https://app.keygen.sh/settings).
 
-Cryptographically validating schemed licenses can be used to implement
-offline licensing, as well as adding additional security to your
-licensing model. All that is needed to cryptographically validate
-a license is your account's public key.
+Cryptographically validating encrypted and signed licenses can be used
+to implement offline licensing, as well as adding additional security to
+your licensing model. All that is needed to cryptographically validate
+a license is your account's RSA public key.
 
 The license's policy _must_ implement one of the following [schemes](https://keygen.sh/docs/api/#policies-create-attrs-scheme):
 
