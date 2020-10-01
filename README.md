@@ -1,6 +1,7 @@
 # Example Cryptographic Verification
-This is an example of cryptographically validating license keys using
-your Keygen account's public key. You can find your public key within
+This is an example of cryptographically validating license keys, and
+extracting embedded tamper-proof data within the key for offline use, all
+with your Keygen account's public key. You can find your public key within
 [your account's settings page](https://app.keygen.sh/settings).
 
 Cryptographically validating encrypted and signed licenses can be used
