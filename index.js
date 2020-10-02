@@ -41,34 +41,21 @@ async function main() {
   }
 
   switch (scheme) {
-    // Decrypt license key that is encrypted using RSA's PKCS1 v1.5 padding
-    case 'RSA_2048_PKCS1_ENCRYPT': {
-      // Decode the base64 encoded key
-      const buf = Buffer.from(key, 'base64')
-
-      // Decrypt the key
-      try {
-        const decryptedKey = crypto.publicDecrypt({ key: KEYGEN_PUBLIC_KEY, padding: crypto.constants.RSA_PKCS1_PADDING }, buf)
-
-        console.log(chalk.green(`License key is cryptographically valid!`))
-        console.log(chalk.gray(`Decrypted: ${decryptedKey}`))
-      } catch (e) {
-        console.error(chalk.red('License key is not valid!'))
-      }
-
-      break
-    }
     // Verify license key that is signed using RSA's PKCS1 v1.5 padding
-    case 'RSA_2048_PKCS1_SIGN': {
+    case 'RSA_2048_PKCS1_SIGN_V2': {
       // Extract key and signature from the license key string
-      const [enc, sig] = key.split('.')
+      const [data, sig] = key.split('.')
+      const [prefix, enc] = data.split('/')
+      if (prefix !== 'key') {
+        throw new Error(`Unsupported prefix '${prefix}'`)
+      }
 
       // Decode the base64 encoded key
       const dec = Buffer.from(enc, 'base64').toString()
 
       // Verify the signature
       const verifier = crypto.createVerify('sha256')
-      verifier.write(dec)
+      verifier.write(`key/${enc}`)
       verifier.end()
 
       const ok = verifier.verify({ key: KEYGEN_PUBLIC_KEY, padding: crypto.constants.RSA_PKCS1_PADDING }, sig, 'base64')
@@ -82,16 +69,20 @@ async function main() {
       break
     }
     // Verify license key that is signed using RSA's PKCS1-PSS padding
-    case 'RSA_2048_PKCS1_PSS_SIGN': {
+    case 'RSA_2048_PKCS1_PSS_SIGN_V2': {
       // Extract key and signature from the license key string
-      const [enc, sig] = key.split('.')
+      const [data, sig] = key.split('.')
+      const [prefix, enc] = data.split('/')
+      if (prefix !== 'key') {
+        throw new Error(`Unsupported prefix '${prefix}'`)
+      }
 
       // Decode the base64 encoded key
       const dec = Buffer.from(enc, 'base64').toString()
 
       // Verify the signature
       const verifier = crypto.createVerify('sha256')
-      verifier.write(dec)
+      verifier.write(`key/${enc}`)
       verifier.end()
 
       const ok = verifier.verify({ key: KEYGEN_PUBLIC_KEY, padding: crypto.constants.RSA_PKCS1_PSS_PADDING }, sig, 'base64')
@@ -99,6 +90,23 @@ async function main() {
         console.log(chalk.green(`License key is cryptographically valid!`))
         console.log(chalk.gray(`Decoded: ${dec}`))
       } else {
+        console.error(chalk.red('License key is not valid!'))
+      }
+
+      break
+    }
+    // Decrypt license key that is encrypted using RSA's PKCS1 v1.5 padding
+    case 'RSA_2048_PKCS1_ENCRYPT': {
+      // Decode the base64 encoded key
+      const buf = Buffer.from(key, 'base64')
+
+      // Decrypt the key
+      try {
+        const decryptedKey = crypto.publicDecrypt({ key: KEYGEN_PUBLIC_KEY, padding: crypto.constants.RSA_PKCS1_PADDING }, buf)
+
+        console.log(chalk.green(`License key is cryptographically valid!`))
+        console.log(chalk.gray(`Decrypted: ${decryptedKey}`))
+      } catch (e) {
         console.error(chalk.red('License key is not valid!'))
       }
 
@@ -122,7 +130,7 @@ async function main() {
       break
     }
     default:
-      throw new Error(`Unsupported scheme ${scheme}`)
+      throw new Error(`Unsupported scheme '${scheme}'`)
   }
 }
 

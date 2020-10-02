@@ -11,9 +11,9 @@ a license is your account's RSA public key.
 
 The license's policy _must_ implement one of the following [schemes](https://keygen.sh/docs/api/#policies-create-attrs-scheme):
 
+- `RSA_2048_PKCS1_SIGN_V2`
+- `RSA_2048_PKCS1_PSS_SIGN_V2`
 - `RSA_2048_PKCS1_ENCRYPT`
-- `RSA_2048_PKCS1_SIGN`
-- `RSA_2048_PKCS1_PSS_SIGN`
 - `RSA_2048_JWT_RS256`
 
 ## Running the example
@@ -40,8 +40,8 @@ yarn
 
 Then run the script, passing in the `key` as well as the `scheme`:
 ```
-yarn start --scheme RSA_2048_PKCS1_PSS_SIGN --key SOME_LICENSE_KEY_HERE
-yarn start -s RSA_2048_PKCS1_PSS_SIGN -k SOME_LICENSE_KEY_HERE
+yarn start --scheme RSA_2048_PKCS1_PSS_SIGN_V2 --key SOME_LICENSE_KEY_HERE
+yarn start -s RSA_2048_PKCS1_PSS_SIGN_V2 -k SOME_LICENSE_KEY_HERE
 ```
 
 How a given license key is validated will depend on the scheme. Please
