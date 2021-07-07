@@ -26,11 +26,6 @@ async function main() {
     throw new Error('Public key is required')
   }
 
-  if (!KEYGEN_PUBLIC_KEY.includes(`-----BEGIN PUBLIC KEY-----`) ||
-      !KEYGEN_PUBLIC_KEY.includes(`-----END PUBLIC KEY-----`)) {
-    throw new Error('Public key is not valid')
-  }
-
   // Validate flags
   if (!scheme) {
     throw new Error('Scheme is required')
@@ -41,6 +36,33 @@ async function main() {
   }
 
   switch (scheme) {
+    // Verify license key that is signed using Ed25519
+    case 'ED25519_SIGN': {
+      // Extract key and signature from the license key string
+      const [data, sig] = key.split('.')
+      const [prefix, enc] = data.split('/')
+      if (prefix !== 'key') {
+        throw new Error(`Unsupported prefix '${prefix}'`)
+      }
+
+      // Decode the base64 encoded key and dataset
+      const der = Buffer.from(KEYGEN_PUBLIC_KEY, 'base64')
+      const dec = Buffer.from(enc, 'base64').toString()
+
+      // Decode and verify the signature
+      const verifyKey = crypto.createPublicKey({ key: der, format: 'der', type: 'spki' })
+      const signatureBytes = Buffer.from(sig, 'base64')
+      const dataBytes = Buffer.from(data)
+      const ok = crypto.verify(null, dataBytes, verifyKey, signatureBytes)
+      if (ok) {
+        console.log(chalk.green(`License key is cryptographically valid!`))
+        console.log(chalk.gray(`Decoded: ${dec}`))
+      } else {
+        console.error(chalk.red('License key is not valid!'))
+      }
+
+      break
+    }
     // Verify license key that is signed using RSA's PKCS1 v1.5 padding
     case 'RSA_2048_PKCS1_SIGN_V2': {
       // Extract key and signature from the license key string
@@ -136,6 +158,7 @@ async function main() {
 
 main().catch(err =>
   console.error(
-    chalk.red(`Error: ${err.message}`)
+    chalk.red(`Error: ${err.message}\n`),
+    err.stack,
   )
 )

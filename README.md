@@ -19,14 +19,10 @@ The license's policy _must_ implement one of the following [schemes](https://key
 ## Running the example
 
 First up, add an environment variable containing your public key:
+
 ```bash
-# Your Keygen account's public key (make sure it is *exact* - newlines and all)
-export KEYGEN_PUBLIC_KEY=$(printf %b \
-  '-----BEGIN PUBLIC KEY-----\n' \
-  'zdL8BgMFM7p7+FGEGuH1I0KBaMcB/RZZSUu4yTBMu0pJw2EWzr3CrOOiXQI3+6bA\n' \
-  # …
-  'efK41Ml6OwZB3tchqGmpuAsCEwEAaQ==\n' \
-  '-----END PUBLIC KEY-----')
+# Your Keygen account's Ed25519 or RSA public key
+export KEYGEN_PUBLIC_KEY="YOUR_PUBLIC_KEY_HERE"
 ```
 
 You can either run each line above within your terminal session before
@@ -34,13 +30,17 @@ starting the app, or you can add the above contents to your `~/.bashrc`
 file and then run `source ~/.bashrc` after saving the file.
 
 Next, install dependencies with [`yarn`](https://yarnpkg.comg):
+
 ```
 yarn
 ```
 
 Then run the script, passing in the `key` as well as the `scheme`:
+
 ```
-yarn start --scheme RSA_2048_PKCS1_PSS_SIGN_V2 --key SOME_LICENSE_KEY_HERE
+yarn start --scheme ED25519_SIGN --key SOME_SIGNED_LICENSE_KEY_HERE
+
+# or...
 yarn start -s RSA_2048_PKCS1_PSS_SIGN_V2 -k SOME_LICENSE_KEY_HERE
 ```
 
