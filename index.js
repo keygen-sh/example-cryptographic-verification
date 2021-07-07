@@ -45,7 +45,7 @@ async function main() {
         throw new Error(`Unsupported prefix '${prefix}'`)
       }
 
-      // Decode the base64 encoded key and dataset
+      // Decode the base64 encoded Ed25519 verify key and license dataset
       const der = Buffer.from(KEYGEN_PUBLIC_KEY, 'base64')
       const dec = Buffer.from(enc, 'base64').toString()
 
